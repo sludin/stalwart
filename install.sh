@@ -14,6 +14,9 @@ Options:
  -d target directory on stalwart host
  -p ssh port (default: 22)
  -t directory to place stalwart.pl
+ -i path to perl interpreter to use
+ -x patterns to exclude
+ -f files / diectories to sync
 EOF
 )
 
@@ -36,6 +39,7 @@ STALWART_DEST=""
 STALWART_HOST=""
 STALWART_FILES=""
 STALWART_EXCLUDES=""
+STALWART_PERL=`which perl`
 DRY_RUN=""
 
 for i
@@ -85,6 +89,10 @@ do
             STALWART_FILES="$2"
             shift; shift;
             ;;
+        -i)
+            STALWART_PERL="$2"
+            shift; shift;
+            ;;
         --) shift ; break ;;
     esac
 done
@@ -122,14 +130,18 @@ if [ "$DRY_RUN" = "YES" ]; then
 fi
 
 
-perl -p -e "s|STALWART_USER|$STALWART_USER|g; s|STALWART_HOST|$STALWART_HOST|g; s|STALWART_PORT|$STALWART_PORT|g; s|STALWART_KEY|$STALWART_KEY|g; s|STALWART_DEST|$STALWART_DEST|g; s|STALWART_TARGET|$STALWART_TARGET|g; s|STALWART_CONFIG|$STALWART_CONFIG|g; s|STALWART_FILES|$STALWART_FILES|g; s|STALWART_EXCLUDES|$STALWART_EXCLUDES|g" stalwart.config.example > $STALWART_CONFIG
+$STALWART_PERL -p -e "s|STALWART_USER|$STALWART_USER|g; s|STALWART_HOST|$STALWART_HOST|g; s|STALWART_PORT|$STALWART_PORT|g; s|STALWART_KEY|$STALWART_KEY|g; s|STALWART_DEST|$STALWART_DEST|g; s|STALWART_TARGET|$STALWART_TARGET|g; s|STALWART_CONFIG|$STALWART_CONFIG|g; s|STALWART_FILES|$STALWART_FILES|g; s|STALWART_EXCLUDES|$STALWART_EXCLUDES|g" stalwart.config.example > $STALWART_CONFIG
 
-sudo perl -p -e "s|STALWART_TARGET|$STALWART_TARGET/stalwart.pl|g; s|STALWART_CONFIG|$STALWART_CONFIG|g;" org.ludin.stalwart.plist.example > /tmp/stalwart.plist
+sudo $STALWART_PERL -p -e "s|STALWART_TARGET|$STALWART_TARGET/stalwart.pl|g; s|STALWART_CONFIG|$STALWART_CONFIG|g;" org.ludin.stalwart.plist.example > /tmp/stalwart.plist
 sudo cp /tmp/stalwart.plist $STALWART_PLIST
 rm -f /tmp/stalwart.plist
 
-sudo cp stalwart.pl $STALWART_TARGET
-sudo chmod +x $STALWART_TARGET
+$STALWART_PERL -p -e "s|STALWART_PERL|$STALWART_PERL|g;" stalwart.pl > /tmp/stalwart.pl
+sudo cp /tmp/stalwart.pl $STALWART_TARGET
+rm -f /tmp/stalwart.pl
+
+#sudo cp stalwart.pl $STALWART_TARGET
+#sudo chmod +x $STALWART_TARGET
 
 sudo launchctl unload $STALWART_PLIST
 sudo launchctl load -w $STALWART_PLIST
