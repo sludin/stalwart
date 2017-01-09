@@ -1,12 +1,12 @@
 {
-    "files":   [ "/Users/sludin/Documents", "/Users/sludin/share" ],
-    "exclude": [ "*.vmdk" ],
+    "files":   [ STALWART_FILES ],
+    "exclude": [ STALWART_EXCLUDES ],
     "host": {
-        "hostname":    "www.duckdns.org",
-        "key":         "/Users/sludin/.ssh/keys/id_rsa-backup",
-        "user":        "backup",
-        "destination": "/Volumes/Backups/Backups/",
-        "port":        22
+        "hostname":    "STALWART_HOST",
+        "key":         "STALWART_KEY",
+        "user":        "STALWART_USER",
+        "destination": "STALWART_DEST",
+        "port":        "STALWART_PORT"
     }
 }
 

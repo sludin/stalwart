@@ -7,23 +7,42 @@ use Data::Dumper;
 use File::HomeDir;
 use IO::Pipe;
 use Getopt::Long;
+use POSIX qw(strftime);
 
+my $VERSION = "1.01";
 
 my $DEFAULT_CONFIG_DIR = File::HomeDir->my_home . "/.stalwart";
 my $DEFAULT_CONFIG_FILE = "$DEFAULT_CONFIG_DIR/stalwart.config";
 
 my $config_file = $DEFAULT_CONFIG_FILE;
+my $version;
 
-GetOptions( "config=s" => \$config_file );
+GetOptions( "config=s" => \$config_file,
+            "version" => \$version );
 
+if ( $version )
+{
+  print "stalwart.pl version $VERSION\n";
+  exit 0;
+}
+
+my $date = strftime "%m/%d/%Y %H:%M:%S", localtime;
+print "-" x 40, "\n";
+print $date, "\n";
 
 my $json_config = slurp( $config_file ) || die "Could not open config: $config_file";
-
 
 my $config = decode_json( $json_config );
 
 my $files  = $config->{files};
 my $host   = $config->{host};
+
+if ( ! @$files )
+{
+  print "No files to sync in config\n";
+  exit 1;
+}
+
 
 
 my $port     = exists $host->{port} ? " -p $host->{port}" : "";
@@ -50,9 +69,6 @@ $filelist =~ s/\s$//;
 $ssh = "-e \"ssh$port$identity\" " if ( $port || $identity );
 
 my $cmd = "rsync -av $ssh$exclude $filelist $host->{user}\@$host->{hostname}:$host->{destination}";
-
-#print $cmd, "\n";
-#exit(0);
 
 my $pipe = IO::Pipe->new();
 

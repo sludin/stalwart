@@ -6,8 +6,8 @@
 <key>Label</key><string>org.ludin.stalwart</string>
 <key>ProgramArguments</key>
 <array>
-  <string>/Users/sludin/Documents/projects/stalwart/stalwart.pl</string>
-  <string>--config=/Users/sludin/.stalwart/stalwart.config</string>
+  <string>STALWART_TARGET</string>
+  <string>--config=STALWART_CONFIG</string>
 </array>
 <key>StartInterval</key><integer>7200</integer>
 <key>RunAtLoad</key><true/>
