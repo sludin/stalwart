@@ -1,0 +1,12 @@
+{
+    "files":   [ "/Users/sludin/Documents", "/Users/sludin/share" ],
+    "exclude": [ "*.vmdk" ],
+    "host": {
+        "hostname":    "www.duckdns.org",
+        "key":         "/Users/sludin/.ssh/keys/id_rsa-backup",
+        "user":        "backup",
+        "destination": "/Volumes/Backups/Backups/",
+        "port":        22
+    }
+}
+
